@@ -35,6 +35,6 @@ version: <<version>>
 </appconfig>
 </platform>
 <code>
-<initScript>/</initScript>
+<initScript></initScript>
 </code>
 </appwizard>
