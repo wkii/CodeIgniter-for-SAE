@@ -1,0 +1,40 @@
+<appwizard>
+<introduction>
+<name>CodeIgniter for SAE</name>
+<author>纳兰佛德</author>
+<icon>ci.png</icon>
+<homepage>https://github.com/wkii/CodeIgniter-for-SAE</homepage>
+<description>
+<![CDATA[
+<p>这是php框架CodeIgniter的非官方sae版本.</p>
+<p>该版本有以下几个优点：</p>
+		<ol>
+			<li>完全不修改框架本身。未对system下的文件做任何修改。利于你的升级和扩展。</li>
+			<li>自动适应Sae环境和非Sae环境。因此你可以在本地开发时使用你的普通php环境。</li>
+			<li>针对非SAE环境增强了CI的文件缓存功能（包括页面缓存），分级目录存放，避免一个目录下文件太多。非页面缓存增加防下载防执行并验证有效性功能。</li>
+			<li>如果是Sae环境，则使用kvdb存储缓存，如果你本地开发使用了file，到Sae环境会自动使用kvdb，无须任何修改。</li>
+			<li>文件上传则使用Storage，与本地的区别仅仅是目录名配置的区别。</li>
+			<li>log使用sae的sae_debug。记录的log可在应用管理的日志中查看debug类型的日志。</li>
+			<li>支持图片处理，但sae只能使用GD2。</li>
+		</ol>
+]]>
+</description>
+</introduction>
+<platform>
+<services>
+<service name="uploads" params="public">Storage</service>
+<service>KVDB</service>
+</services>
+<appconfig>
+<tpl>
+<![CDATA[
+name: <<appname>>
+version: <<version>>
+             ]]>
+</tpl>
+</appconfig>
+</platform>
+<code>
+<initScript>/</initScript>
+</code>
+</appwizard>
