@@ -1651,7 +1651,6 @@ class MY_Image_lib {
 	public function sae_storage_write($path,$content)
 	{
 		$storage_info = $this->get_storage_info($path);
-		print_r($storage_info);
 		return $this->sae_storage->write($storage_info['domain'],$storage_info['path'],$content);
 	}
 
