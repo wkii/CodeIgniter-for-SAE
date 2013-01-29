@@ -36,13 +36,16 @@ class MY_Upload {
 	public $client_name				= '';
 
 	protected $_file_name_override	= '';
-	
+
 	// sae storage
 	protected $sae_storage = null;
-	
+
 	// sae domain
 	protected $sae_domain = null;
-	
+
+	// sae path
+	protected $sae_path = null;
+
 	protected $storage_url;
 
 	/**
@@ -293,23 +296,23 @@ class MY_Upload {
 				return FALSE;
 			}
 		}
-		
+
 		// sae环境的处理
 		if (class_exists('SaeKV'))
 		{
-			$ret = $this->sae_storage->upload($this->sae_domain, $this->upload_path.$this->file_name, $this->file_temp);
+			$ret = $this->sae_storage->upload($this->sae_domain, $this->sae_path.$this->file_name, $this->file_temp);
 			if ($ret === false) {
 				$this->set_error('Errno:'.$this->sae_storage->errno().' -- '.$this->sae_storage->errmsg());
 				return FALSE;
 			}
 			else
 			{
-				$this->storage_url = $this->sae_storage->getCDNUrl($this->sae_domain, $this->upload_path.$this->file_name);
+				$this->storage_url = $this->sae_storage->getCDNUrl($this->sae_domain, $this->sae_path.$this->file_name);
 			}
 			$this->set_image_properties($this->file_temp);
 			return TRUE;
 		}
-		
+
 
 		/*
 		 * Move the file to the final destination
@@ -402,7 +405,7 @@ class MY_Upload {
 			mt_srand();
 			$filename = md5(uniqid(mt_rand())).$this->file_ext;
 		}
-		
+
 		// 检查sae环境
 		if (class_exists('SaeKV'))
 		{
@@ -426,7 +429,7 @@ class MY_Upload {
 					$new_filename = $filename.$i.$this->file_ext;
 					break;
 				}
-				
+
 			}elseif ( ! file_exists($path.$filename.$i.$this->file_ext))
 			{
 				$new_filename = $filename.$i.$this->file_ext;
@@ -726,46 +729,38 @@ class MY_Upload {
 			$this->set_error('upload_no_filepath');
 			return FALSE;
 		}
-		
+
 		if (class_exists('SaeKV'))
 		{
 			$this->sae_storage = new SaeStorage();
 			$this->upload_path = str_replace("\\", "/", $this->upload_path);
-			
-			if ($this->upload_path == '' || (substr($this->upload_path, 0, 1) == '/') || (substr($this->upload_path, 0, 1) == '.') )
+
+			if ( (substr($this->upload_path, 0, 1) == '/') || (substr($this->upload_path, 0, 1) == '.') )
 			{
-				$this->set_error('The Sae the Storage domain can not be empty and must be the beginning of the letters or numbers.');
+				$this->set_error('The Sae the Storage domain must be the beginning of the letters or numbers.');
 				return FALSE;
 			}
-			$pos = strpos($this->upload_path, '/');
-			if ($pos)
-			{
-				$path = explode('/', $this->upload_path);
-				if (!preg_match('/^[a-z0-9]+$/i', $path[0])){
-					$this->set_error('The Sae the Storage domain must be the letters or numbers.');
-					return FALSE;
-				}
-				else
-				{
-					$this->sae_domain = $path[0];
-					array_shift($path);
-					$this->upload_path = '';
-					if (!empty($path)){
-						foreach ($path as $k => $v)
-						{
-							if ($v) $this->upload_path .= $v . '/';
-						}
-					}
-					else
-					{
-						$this->upload_path = '';
-					}
-				}
+
+			$path = explode('/', $this->upload_path);
+
+			if (!preg_match('/^[a-z0-9]+$/i', $path[0])){
+				$this->set_error('The Sae the Storage domain must be the letters or numbers.');
+				return FALSE;
 			}
 			else
 			{
-				$this->sae_domain = $this->upload_path;
+				$this->sae_domain = $path[0];
+				array_shift($path);
+				$this->sae_path = '';
+
+				if (!empty($path)){
+					foreach ($path as $k => $v)
+					{
+						if ($v) $this->sae_path .= $v . '/';
+					}
+				}
 			}
+
 			return TRUE;
 		}
 
